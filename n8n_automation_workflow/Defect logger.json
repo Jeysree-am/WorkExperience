@@ -1,0 +1,131 @@
+{
+  "name": "Defect logger",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "147951b4-ed3b-4474-9e5c-6a9283f63001",
+      "name": "When chat message received",
+      "webhookId": "f082c051-8e7f-4101-8a23-f2265dbcc29b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0ef02447-0008-42cf-bd02-ec0e445d3bd2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "db1ad61d-8e47-4591-88e6-a18cc2401f31",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "579TPWLzdtOiCPB2",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "project": {
+          "__rl": true,
+          "value": "10067",
+          "mode": "list",
+          "cachedResultName": "CUTQ-QA"
+        },
+        "issueType": {
+          "__rl": true,
+          "value": "10069",
+          "mode": "list",
+          "cachedResultName": "Bug"
+        },
+        "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.jiraTool",
+      "typeVersion": 1,
+      "position": [
+        528,
+        176
+      ],
+      "id": "f50af175-90ee-4f79-a72f-4db1f9dac283",
+      "name": "Create an issue in Jira Software",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "8i4V7VnaoDcOLP6k",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an issue in Jira Software": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "dcccda2e-6d4d-45cc-9d33-5b55aae9c8c0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d49ae35ba46ce9fd4a25a3b901e82aa769b317c2c5e433f14a11fc8dba154d6a"
+  },
+  "id": "ce9XgG0LYj5kKfKt",
+  "tags": []
+}
