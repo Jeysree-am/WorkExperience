@@ -1,6 +1,19 @@
 // @ts-check
+const path = require('path');
+const dotenv = require('dotenv');
 
-require('dotenv').config();
+const result = dotenv.config({
+    path: path.resolve(__dirname, '.env')
+});
+
+console.log("Config loaded");
+console.log("UI_BASE_URL:", process.env.UI_BASE_URL);
+//require('dotenv').config();
+console.log("UI_BASE_URL =", process.env.UI_BASE_URL);
+const { defineConfig } = require('@playwright/test');
+//const test = require('node:test');
+
+
 //import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -15,7 +28,7 @@ require('dotenv').config();
  * @see https://playwright.dev/docs/test-configuration
  */
 //export default defineConfig({
-module.exports = ({
+module.exports = defineConfig({
   testDir: './tests',
   timeout:60000,
   /* Run tests in files in parallel */
@@ -27,14 +40,14 @@ module.exports = ({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [["line"],["allure-playwright"]] ,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-     baseURL: process.env.BASE_URL,
-     headless: true,
+     //baseURL: process.env.BASE_URL,
+     headless: false,
      screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+     video: 'retain-on-failure',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -43,20 +56,41 @@ module.exports = ({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { browserName: 'chromium' }
+      //UI-Chromium
+      name: 'UI-chromium',
+       use: { browserName: 'chromium',
+        baseURL: process.env.UI_BASE_URL,
+       }
     },
 
+    // {
+    //   //UI-Firefox
+    //   name: 'UI-firefox',
+    //   use: { browserName: 'firefox',
+    //     baseURL: process.env.UI_BASE_URL,
+    //   }
+    // },
+
+    // {
+    //   //UI-Webkit
+    //   name: 'UI-webkit',
+    //   use: { browserName: 'webkit',
+    //     baseURL: process.env.UI_BASE_URL,
+    //    }
+    // },
+    //API-Tests
     {
-      name: 'firefox',
-      use: { browserName: 'firefox' }
-    },
-
-    {
-      name: 'webkit',
-      use: { browserName: 'webkit' }
-    },
-
+      name: 'API',
+      testMatch: /.*\.api\.spec\.js/,
+       use:{
+        baseURL: process.env.API_BASE_URL,
+         extraHTTPHeaders: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+      }
+    }
+  }
+],
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',
@@ -76,11 +110,11 @@ module.exports = ({
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
-  ],
-Reporter:[
-  ['html', { outputFolder:'reports/html' }],
-  ['json',{ outputFile:'reports/test-results.json' }]
-  ],
+  
+//reporter:[
+  //['html', { outputFolder:'reports/html' }],
+  //['json',{ outputFile:'reports/test-results.json' }]
+  //],
 
   /* Run your local dev server before starting the tests */
   // webServer: {
